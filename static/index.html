@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sabi</title>
+<style>
+:root{--ink:#12231b;--paper:#eef2ee;--green:#0a6b3f;--red:#b3202a;--amber:#b7791f;--line:#c9d4cc}
+@media (prefers-color-scheme:dark){:root{--ink:#e8f0ea;--paper:#0f1a14;--line:#2a3a31}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:17px/1.5 "Segoe UI",system-ui,sans-serif}
+main{max-width:34rem;margin:0 auto;padding:1.5rem 1.1rem 4rem}
+h1{font-size:3.2rem;line-height:1;margin:.5rem 0 .2rem;font-weight:800;letter-spacing:-.04em}
+.sub{margin:0 0 1.5rem;max-width:28rem}
+label.pick{display:block;border:2px dashed var(--green);padding:1.4rem;text-align:center;cursor:pointer;border-radius:.4rem}
+input[type=file]{display:none}
+img#prev{display:none;width:100%;margin-top:1rem;border-radius:.4rem}
+button,a.btn{font:inherit;font-weight:700;background:var(--green);color:#fff;border:0;padding:.8rem 1.1rem;border-radius:.4rem;cursor:pointer;text-decoration:none;display:inline-block;margin-top:1rem}
+button:focus-visible,a.btn:focus-visible,label.pick:focus-within{outline:3px solid var(--amber);outline-offset:2px}
+button.alt{background:transparent;color:var(--ink);border:2px solid var(--ink)}
+#out{display:none;margin-top:2rem}
+.stamp{display:inline-block;border:4px solid;padding:.2rem 1rem;font-size:2rem;font-weight:800;transform:rotate(-3deg);margin-bottom:1rem}
+.high{color:var(--red)}.medium{color:var(--amber)}.low{color:var(--green)}.unclear{color:var(--ink)}
+ul{padding:0;list-style:none}li{border-top:1px solid var(--line);padding:.7rem 0}
+li b{display:block}small{opacity:.75}
+.nafdac{background:var(--line);padding:.8rem;border-radius:.4rem;margin-top:1rem}
+</style></head>
+<body><main>
+<h1>Sabi</h1>
+<p class="sub">Photo the pack. Sabi looks for signs of a fake or tampered product, then sends you to NAFDAC to confirm the number.</p>
+<label class="pick">Take or choose a photo of the pack<input id="file" type="file" accept="image/*" capture="environment"></label>
+<img id="prev" alt="Your pack photo">
+<button id="go" disabled>Check this pack</button>
+<p id="msg" role="status"></p>
+<section id="out" aria-live="polite">
+  <div id="stamp" class="stamp"></div>
+  <p id="sum"></p><ul id="flags"></ul>
+  <div class="nafdac"><b>NAFDAC number on pack:</b> <span id="num">not found</span><br>
+    <button class="alt" id="copy">Copy number</button>
+    <a class="btn" id="ver" target="_blank" rel="noopener">Verify on NAFDAC</a>
+    <p><small>A number printed on a pack proves nothing until NAFDAC confirms it matches this product.</small></p></div>
+  <p><small>Sabi is a risk screen, not proof. If in doubt, don’t buy it and report to NAFDAC: 0800-162-3322.</small></p>
+</section>
+</main>
+<script>
+const $=id=>document.getElementById(id);let file;
+$('file').onchange=e=>{file=e.target.files[0];if(!file)return;$('prev').src=URL.createObjectURL(file);$('prev').style.display='block';$('go').disabled=false};
+$('go').onclick=async()=>{
+  $('msg').textContent='Checking…';$('go').disabled=true;
+  const fd=new FormData();fd.append('photo',file);
+  try{
+    const r=await fetch('/api/check',{method:'POST',body:fd});const d=await r.json();
+    if(!r.ok)throw new Error(d.detail||'Something went wrong');
+    $('stamp').textContent=d.risk.toUpperCase()+' RISK';$('stamp').className='stamp '+d.risk;
+    $('sum').textContent=d.summary;$('flags').innerHTML='';
+    d.flags.forEach(f=>{const li=document.createElement('li');const b=document.createElement('b');
+      b.textContent=f.code.replaceAll('_',' ').toLowerCase()+' ('+f.severity+')';
+      li.append(b,f.evidence+' ['+f.where+']');$('flags').append(li)});
+    $('num').textContent=d.nafdac_number||'not found';$('ver').href=d.verify_url;
+    $('copy').onclick=()=>navigator.clipboard.writeText(d.nafdac_number||'');
+    $('out').style.display='block';$('msg').textContent=d.mode==='mock'?'Demo mode: sample result.':'';
+  }catch(e){$('msg').textContent='Could not check: '+e.message}
+  $('go').disabled=false;
+};
+</script></body></html>
