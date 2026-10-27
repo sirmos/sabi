@@ -6,3 +6,4 @@ __pycache__/
 samples/raw/
 uploads/
 node_modules/
+sam_out.txt
