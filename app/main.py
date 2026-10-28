@@ -43,6 +43,11 @@ async def match(pack: str = Form(...), registry: UploadFile = File(...)):
         raise HTTPException(502, f"Match failed: {e}")
 
 
+@app.get("/play")
+def play():
+    return FileResponse("static/play.html")
+
+
 @app.get("/")
 def home():
     return FileResponse("static/index.html")

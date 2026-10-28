@@ -13,9 +13,9 @@ Return ONLY JSON:
            "severity": "low|medium|high", "evidence": str, "where": str, "find": str|null, "image": int}],
  "retake": [str], "risk": "low|medium|high|unclear", "summary": str}"""
 
-MATCH_SYSTEM = """You compare a product pack against NAFDAC's registry record shown in a screenshot. Read the screenshot exactly. Compare: NAFDAC number, product name, product type vs registry category, manufacturer, and whether the pack's expiry date falls after the registry's expiry date. A matching number alone is not enough. Never call the pack genuine; say consistent or inconsistent with the record.
+MATCH_SYSTEM = """You compare a product pack against NAFDAC's registry record shown in a screenshot. Read the screenshot exactly. Compare: NAFDAC number, product name, product type vs registry category, manufacturer, and whether the pack's expiry date falls after the registry's expiry date. A matching number alone is not enough. Never call the pack genuine; say consistent or inconsistent with the record. If the screenshot says the product was not found, or shows no product details, set registry.found=false, leave the other registry fields null, set verdict to "inconsistent", add the check {"item":"NAFDAC number","pack":<the number on the pack>,"registry":null,"result":"mismatch","note":"NAFDAC has no record of this number"} and say in the summary that the number is not in the registry (it may also have been misread, so the digits should be re-checked). If a record is found and its product name, category and manufacturer fit the pack, the verdict is "consistent" even when the pack's batch or expiry cannot be read: mark those as cannot_tell.
 Return ONLY JSON:
-{"registry": {"product_name": str|null, "category": str|null, "source": str|null, "manufacturer": str|null, "nafdac_number": str|null, "approved": str|null, "expiry": str|null},
+{"registry": {"found": bool, "product_name": str|null, "category": str|null, "source": str|null, "manufacturer": str|null, "nafdac_number": str|null, "approved": str|null, "expiry": str|null},
  "checks": [{"item": str, "pack": str|null, "registry": str|null, "result": "match|mismatch|cannot_tell", "note": str}],
  "verdict": "consistent|inconsistent|unclear", "summary": str}"""
 
@@ -33,7 +33,7 @@ MOCK_PACK = {
     "risk": "high", "summary": "Several risk signs. Confirm the NAFDAC number before buying or using this pack.",
 }
 MOCK_MATCH = {
-    "registry": {"product_name": "SAMPLE CREAM", "category": "Drugs", "source": "Imported Product", "manufacturer": "SAMPLE PHARMA LTD", "nafdac_number": "DEMO-0000", "approved": "2023-07-27", "expiry": "2028-07-26"},
+    "registry": {"found": True, "product_name": "SAMPLE CREAM", "category": "Drugs", "source": "Imported Product", "manufacturer": "SAMPLE PHARMA LTD", "nafdac_number": "DEMO-0000", "approved": "2023-07-27", "expiry": "2028-07-26"},
     "checks": [
         {"item": "NAFDAC number", "pack": "DEMO-0000", "registry": "DEMO-0000", "result": "match", "note": "Numbers are identical."},
         {"item": "Product type", "pack": "toothpaste", "registry": "Drugs", "result": "mismatch", "note": "A toothpaste pack carrying a drug registration is a red flag."},
@@ -43,6 +43,7 @@ MOCK_MATCH = {
 
 
 def _parse(text: str) -> dict:
+    text = re.sub(r"<think>.*?</think>", "", text, flags=re.S)
     text = re.sub(r"^```(?:json)?|```$", "", text.strip(), flags=re.M).strip()
     return json.loads(text[text.find("{") : text.rfind("}") + 1])
 
@@ -51,12 +52,19 @@ def _img(b: bytes, mime: str) -> dict:
     return {"type": "image_url", "image_url": {"url": f"data:{mime};base64,{base64.b64encode(b).decode()}"}}
 
 
+def _cfg():
+    """Provider for reading labels: Meta Model API (default) or Baseten (Muse Spark Open)."""
+    if os.getenv("SABI_PROVIDER", "meta") == "baseten":
+        return "https://inference.baseten.co/v1", os.environ["BASETEN_API_KEY"], "meta-models/muse-spark-open-1026"
+    return os.getenv("META_BASE_URL", "https://api.meta.ai/v1"), os.environ["MODEL_API_KEY"], os.getenv("SABI_MODEL", "muse-spark-1.3")
+
+
 def _llm(system: str, parts: list):
     from openai import OpenAI
 
-    client = OpenAI(base_url=os.getenv("META_BASE_URL", "https://api.meta.ai/v1"), api_key=os.environ["MODEL_API_KEY"])
-    r = client.chat.completions.create(
-        model=os.getenv("SABI_MODEL", "muse-spark-1.3"), temperature=0.2,
+    base, key, model = _cfg()
+    r = OpenAI(base_url=base, api_key=key).chat.completions.create(
+        model=model, temperature=0.2,
         messages=[{"role": "system", "content": system}, {"role": "user", "content": parts}],
     )
     return _parse(r.choices[0].message.content)

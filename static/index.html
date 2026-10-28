@@ -1,18 +1,18 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Sabi: Na original?</title>
+<title>Sabi: Spot the fake</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#090E0C;--panel:#101815;--panel2:#16221D;--line:#21322B;--ink:#E9F1EC;--mute:#92A99D;--brand:#35D07F;--bi:#04140B;--red:#FF6B5B;--amber:#F2B84B;--hl:#FFD23F}
 @media (prefers-color-scheme:light){:root{--bg:#F1F5F2;--panel:#fff;--panel2:#EAF0EC;--line:#D3DED7;--ink:#0C1A13;--mute:#4D6258;--brand:#0B7A3E;--bi:#fff;--red:#C62828;--amber:#A85F00;--hl:#FFC400}}
 *{box-sizing:border-box}
-body{margin:0;color:var(--ink);font:17px/1.55 "Bricolage Grotesque","Segoe UI",system-ui,sans-serif;background:radial-gradient(60rem 30rem at 10% -10%,color-mix(in srgb,var(--brand) 16%,transparent),transparent 70%),radial-gradient(color-mix(in srgb,var(--ink) 9%,transparent) 1px,transparent 1px) 0 0/22px 22px,var(--bg);min-height:100vh}
+body{margin:0;color:var(--ink);font:17px/1.55 "Plus Jakarta Sans","Segoe UI",system-ui,sans-serif;background:radial-gradient(60rem 30rem at 10% -10%,color-mix(in srgb,var(--brand) 16%,transparent),transparent 70%),radial-gradient(color-mix(in srgb,var(--ink) 9%,transparent) 1px,transparent 1px) 0 0/22px 22px,var(--bg);min-height:100vh}
 .top{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
 .in{max-width:72rem;margin:0 auto;padding:.75rem 1.2rem;display:flex;align-items:center;justify-content:space-between}
 .logo{display:flex;gap:.55rem;align-items:center;font-weight:800;font-size:1.3rem;letter-spacing:-.03em}.logo svg{width:1.7rem;height:1.7rem}
-.pill{font-size:.8rem;font-weight:700;padding:.2rem .75rem;border-radius:99px;border:1px solid currentColor}.pill.live{color:var(--brand)}.pill.demo{color:var(--amber)}
+.nav{color:var(--brand);font-weight:700;text-decoration:none}.pill{font-size:.8rem;font-weight:700;padding:.2rem .75rem;border-radius:99px;border:1px solid currentColor}.pill.live{color:var(--brand)}.pill.demo{color:var(--amber)}
 main{max-width:72rem;margin:0 auto;padding:2.2rem 1.2rem 4rem}
 .intro{display:grid;gap:2rem;align-items:center}
 h1{font-size:clamp(2.8rem,9vw,5.6rem);line-height:.92;margin:0 0 1rem;font-weight:800;letter-spacing:-.05em}
@@ -63,14 +63,28 @@ li b{display:block}li small{color:var(--mute);font-size:.95rem}
 .report{display:grid;gap:1.2rem}
 footer{color:var(--mute);font-size:.9rem;text-align:center;padding:0 1.2rem 3rem}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
-</style></head>
+.nav{border:1px solid var(--brand);border-radius:99px;padding:.2rem .95rem;line-height:1.4}.in>span:last-child{display:flex;gap:.9rem;align-items:center}
+.ctas{display:flex;gap:.7rem;flex-wrap:wrap;margin:1.4rem 0 1.2rem}.cta{background:var(--brand);color:var(--bi);font-weight:800;border-radius:.8rem;padding:.8rem 1.3rem;text-decoration:none}.cta.ghost{background:transparent;color:var(--ink);border:2px solid var(--line)}
+.motion{max-width:26rem;margin-top:1.6rem}.motion svg{width:100%;display:block;filter:drop-shadow(0 18px 30px #0006)}.powered{color:var(--mute);font-size:.9rem;margin:.8rem 0 0}
+.msweep{animation:msw 7s linear infinite}@keyframes msw{0%{transform:translateY(0)}40%{transform:translateY(120px)}41%,100%{transform:translateY(120px);opacity:0}}
+.mpin,.mrow{opacity:0;transform-box:fill-box;transform-origin:center}.mpin.a,.mrow.a{animation:mp 7s infinite 1s}.mpin.b,.mrow.b{animation:mp 7s infinite 2s}.mpin.c,.mrow.c{animation:mp 7s infinite 3s}
+@keyframes mp{0%{opacity:0;transform:translateY(5px) scale(.6)}7%{opacity:1;transform:none}88%{opacity:1}100%{opacity:0}}
+.mstamp{opacity:0;transform-box:fill-box;transform-origin:center;animation:mst 7s infinite 4.2s}@keyframes mst{0%{opacity:0;transform:rotate(-7deg) scale(2.2)}5%{opacity:1;transform:rotate(-7deg) scale(1)}86%{opacity:1;transform:rotate(-7deg) scale(1)}100%{opacity:0}}
+@media (prefers-reduced-motion:reduce){.msweep,.mpin,.mrow,.mstamp{animation:none;opacity:1}}a.logo{color:var(--ink);text-decoration:none}h1{letter-spacing:-.03em!important;line-height:1.05!important}.how{margin-top:1rem;color:var(--mute);font-size:.95rem}.how summary{cursor:pointer;font-weight:600;color:var(--ink)}:root{--bg:#06150f;--panel:#0d2219;--line:#1f4a39;--brand:#3ddc97;--bi:#04140B;--amber:#ffb53a}
+body{background:radial-gradient(60rem 36rem at 10% -8%,#14805866,transparent 65%),radial-gradient(46rem 28rem at 100% 8%,#ffb53a26,transparent 60%),radial-gradient(40rem 30rem at 55% 110%,#2a6bd626,transparent 60%),var(--bg)!important}
+h1 .gt{background:linear-gradient(90deg,#ffd166,#ff8a5c 55%,#ff5d73);-webkit-background-clip:text;background-clip:text;color:transparent}
+.cta:not(.ghost),button{background:linear-gradient(135deg,#3ddc97,#16b377)!important;color:#04140B!important;box-shadow:0 10px 26px #16b37755}button:disabled{box-shadow:none}
+.card{background:linear-gradient(160deg,#10301fe0,#0a1d15e0)!important;border-color:#2c6e55!important;box-shadow:0 24px 60px #0008}
+.tiles i{color:var(--amber)!important;border-color:#ffb53a55!important;background:#ffb53a14!important}
+.nav{border-color:#ffb53a!important;color:#ffb53a!important}.logo{font-weight:700!important;letter-spacing:.02em}
+button.alt{background:transparent!important;color:var(--ink)!important;border:2px solid var(--line)!important;box-shadow:none}</style></head>
 <body>
-<header class="top"><div class="in"><span class="logo"><svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M16 2 4 7v8c0 8 5 13 12 15 7-2 12-7 12-15V7z" fill="var(--brand)"/><path d="m10.5 16 4 4 7.5-8" stroke="var(--bi)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>Sabi</span><span id="pill" class="pill"></span></div></header>
+<header class="top"><div class="in"><a href="/" class="logo"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4 6v6c0 5 3.4 8 8 9 4.6-1 8-4 8-9V6z"/><path d="m8.5 12 2.5 2.5 4.5-5"/></svg>Sabi</a><span style="display:flex;gap:.9rem;align-items:center"><a href="/play" class="nav">Play</a><span id="pill" class="pill"></span></span></div></header>
 <main>
-<div class="intro"><div><h1>Na original?</h1>
-<p class="lead">Photo the pack. Sabi checks it for signs of a fake or tampered product, then helps you confirm the NAFDAC record.</p>
+<div class="intro"><div><h1>Spot the <span class="gt">fake</span> before you buy.</h1>
+<div class="ctas"><a class="cta" href="#snap">Check a pack</a><a class="cta ghost" href="/play">Play Market Run</a></div><p class="lead">Photo the pack. Sabi checks it for signs of a fake or tampered product, then helps you confirm the NAFDAC record.</p>
 <div class="tiles"><div><i>Aa</i>Lookalike names and spelling</div><div><i>12</i>Stickers over dates, odd date formats</div><div><i>#</i>NAFDAC number checked against the record</div></div></div>
-<div class="card"><p class="step"><span class="n">1</span>Snap the pack</p>
+<div class="card" id="snap"><p class="step"><span class="n">1</span>Snap the pack</p>
 <label class="pick"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>Add photos of the pack<small>Front, back and the batch code or date</small><input id="file" type="file" accept="image/*" multiple></label>
 <div id="thumbs" class="thumbs"></div><p id="count" class="fname"></p>
 <button id="go" disabled>Inspect this pack</button><p id="msg" class="err" role="alert"></p></div></div>
@@ -90,7 +104,7 @@ footer{color:var(--mute);font-size:.9rem;text-align:center;padding:0 1.2rem 3rem
 <label class="pick" style="margin-top:1rem"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 9h8M8 13h8M8 17h5"/></svg>Add the NAFDAC result screenshot<input id="reg" type="file" accept="image/*"></label>
 <div id="rthumb" class="thumbs"></div><p id="rname" class="fname"></p>
 <button id="cmp" disabled>Compare with the record</button>
-<div id="mout" class="hide"><div id="mstamp" class="stamp" style="margin-top:1.2rem"></div><p id="msum" class="sum"></p><ul id="checks" style="margin-top:.6rem"></ul></div></div>
+<details class="how"><summary>How Sabi decides</summary><p>Sabi never says a product is genuine. It combines three things: warning signs on the pack, whether NAFDAC has a record for the number, and whether that record fits the pack (name, product type, manufacturer, expiry). No record is a strong red flag. A matching record with a clean pack means “looks consistent”.</p></details><div id="mout" class="hide"><div id="mstamp" class="stamp" style="margin-top:1.2rem"></div><p id="msum" class="sum"></p><ul id="checks" style="margin-top:.6rem"></ul></div></div>
 </div></div>
 </main>
 <footer>Sabi is a risk screen, not proof. If in doubt, don’t buy it, and report to NAFDAC: 0800-162-3322.</footer>
@@ -103,8 +117,14 @@ const cap=s=>s.charAt(0).toUpperCase()+s.slice(1).toLowerCase();
 function thumbs(box,list){box.innerHTML='';list.forEach(f=>{const i=el('img');i.src=URL.createObjectURL(f);i.alt=f.name;box.append(i)})}
 function stamp(n,k){n.textContent=LABEL[k]||k;n.className='stamp '+k;n.style.animation='none';void n.offsetWidth;n.style.animation=''}
 function row(list,cls,icon,head,body,pinned){const l=el('li');const d=el('span','dot '+cls+(pinned?' pinned':''));d.append(el('i','',icon));const t=el('div');t.append(el('b','',head),el('small','',body));l.append(d,t);list.append(l)}
+async function shrink(f){try{const b=await createImageBitmap(f,{imageOrientation:'from-image'}),k=Math.min(1,1600/Math.max(b.width,b.height)),c=document.createElement('canvas');c.width=Math.round(b.width*k);c.height=Math.round(b.height*k);c.getContext('2d').drawImage(b,0,0,c.width,c.height);return await new Promise(r=>c.toBlob(bl=>r(bl?new File([bl],f.name.replace(/\.\w+$/,'')+'.jpg',{type:'image/jpeg'}):f),'image/jpeg',.84))}catch{return f}}
 async function post(url,fd){const r=await fetch(url,{method:'POST',body:fd});const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.detail||'Something went wrong. Try again.');return d}
 const tag=c=>c.replaceAll('_',' ').toLowerCase();
+function finalV(p,m){const nf=m.registry&&m.registry.found===false;
+ if(nf)return['high','Not in NAFDAC’s registry','NAFDAC has no record of this number, so treat the product as unregistered unless the digits were misread.'];
+ if(m.verdict==='inconsistent')return['high','Doesn’t match the record','The record doesn’t fit this pack.'];
+ if(m.verdict==='consistent'){const bad=p.risk==='high'||(p.flags||[]).some(f=>f.severity==='high');return bad?['medium','Record fits, pack has warning signs','Check the flagged areas before you buy.']:['low','Looks consistent','The pack fits NAFDAC’s record with no clear warning signs. Photos can’t prove a product is genuine, so buy from trusted sellers.']}
+ return['unclear','Can’t tell yet','Add clearer photos or the NAFDAC screenshot.']}
 function stage(d){const box=$('stage');box.innerHTML='';
   files.forEach((f,i)=>{const w=el('div','wrap');const im=el('img');im.src=URL.createObjectURL(f);im.alt='Pack photo '+(i+1);w.append(im);
     (d.regions||[]).filter(r=>r.image===i).forEach(r=>{const n=d.flags.findIndex(x=>tag(x.code)===r.label)+1,b=r.box,x=el('div','rg');
@@ -114,7 +134,7 @@ $('file').onchange=e=>{files=[...e.target.files];thumbs($('thumbs'),files);$('co
 $('reg').onchange=e=>{regFile=e.target.files[0]||null;thumbs($('rthumb'),regFile?[regFile]:[]);$('rname').textContent=regFile?regFile.name+' is ready':'';$('cmp').disabled=!regFile};
 $('go').onclick=async()=>{
   $('msg').textContent='';$('go').disabled=true;$('go').textContent='Inspecting…';$('thumbs').classList.add('scan');
-  const fd=new FormData();files.forEach(f=>fd.append('photos',f));
+  const fd=new FormData();for(const f of files)fd.append('photos',await shrink(f));
   try{const d=pack=await post('/api/check',fd);
     stamp($('stamp'),d.risk);$('meter').className='meter m-'+d.risk;$('sum').textContent=d.summary;stage(d);
     const pins=new Set((d.regions||[]).map(r=>r.label));
@@ -126,9 +146,9 @@ $('go').onclick=async()=>{
   }catch(e){$('msg').textContent='Could not check this pack: '+e.message}
   $('thumbs').classList.remove('scan');$('go').disabled=false;$('go').textContent='Inspect this pack'};
 $('cmp').onclick=async()=>{
-  $('cmp').disabled=true;$('cmp').textContent='Comparing…';const fd=new FormData();fd.append('pack',JSON.stringify(pack));fd.append('registry',regFile);
+  $('cmp').disabled=true;$('cmp').textContent='Comparing…';const fd=new FormData();fd.append('pack',JSON.stringify(pack));fd.append('registry',await shrink(regFile));
   try{const d=await post('/api/match',fd);
-    stamp($('mstamp'),d.verdict);$('msum').textContent=d.summary;$('checks').innerHTML='';
+    {const v=finalV(pack,d);stamp($('mstamp'),v[0]);$('mstamp').textContent=v[1];$('msum').textContent=v[2]+' '+d.summary}$('checks').innerHTML='';
     d.checks.forEach(c=>row($('checks'),c.result,ICON[c.result]||'?',c.item,'Pack: '+(c.pack||'unreadable')+'. Record: '+(c.registry||'unreadable')+'. '+c.note));
     $('mout').classList.remove('hide');
   }catch(e){$('msg').textContent='Could not compare: '+e.message}
