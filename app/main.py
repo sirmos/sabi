@@ -45,19 +45,28 @@ async def match(pack: str = Form(...), registry: UploadFile = File(...)):
 
 @app.get("/api/diag")
 def diag():
+    import sys
+
+    import openai
+    from openai import OpenAI
+
     from app.checker import _cfg
 
     try:
         base, key, model = _cfg()
     except Exception as e:
         return {"config_error": str(e)}
-    out = {"provider": os.getenv("SABI_PROVIDER", "meta"), "base_url": base, "model": model, "mode": os.getenv("SABI_MODE", "mock"), "key_looks_like_meta": key.startswith("LLM_")}
+    out = {"provider": os.getenv("SABI_PROVIDER", "meta"), "base_url": base, "model": model, "mode": os.getenv("SABI_MODE", "mock"), "key_looks_like_meta": key.startswith("LLM_"), "key_length": len(key), "sdk": openai.__version__, "python": sys.version.split()[0]}
+    c = OpenAI(base_url=base, api_key=key)
     try:
-        from openai import OpenAI
-
-        out["models"] = [x.id for x in OpenAI(base_url=base, api_key=key).models.list()][:40]
+        out["models"] = [x.id for x in c.models.list()][:40]
     except Exception as e:
         out["models_error"] = str(e)[:200]
+    try:
+        r = c.chat.completions.create(model=model, messages=[{"role": "user", "content": "Say OK"}])
+        out["test_call"] = "ok: " + (r.choices[0].message.content or "")[:40]
+    except Exception as e:
+        out["test_call"] = "error: " + str(e)[:300]
     return out
 
 
