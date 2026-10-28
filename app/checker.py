@@ -60,14 +60,23 @@ def _cfg():
 
 
 def _llm(system: str, parts: list):
-    from openai import OpenAI
+    from openai import NotFoundError, OpenAI
 
     base, key, model = _cfg()
-    r = OpenAI(base_url=base, api_key=key).chat.completions.create(
-        model=model, temperature=0.2,
-        messages=[{"role": "system", "content": system}, {"role": "user", "content": parts}],
-    )
-    return _parse(r.choices[0].message.content)
+    client = OpenAI(base_url=base, api_key=key)
+    cands = [model] + ([m for m in ("muse-spark-1.3", "muse-spark-1.2", "muse-spark-1.1") if m != model] if "api.meta.ai" in base else [])
+    tried, last = [], None
+    for m in cands:
+        try:
+            r = client.chat.completions.create(
+                model=m, temperature=0.2,
+                messages=[{"role": "system", "content": system}, {"role": "user", "content": parts}],
+            )
+            return _parse(r.choices[0].message.content)
+        except NotFoundError as e:
+            tried.append(m)
+            last = e
+    raise RuntimeError("No model found (tried " + ", ".join(tried) + "): " + str(last))
 
 
 def _live() -> bool:

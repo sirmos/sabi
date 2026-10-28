@@ -43,6 +43,24 @@ async def match(pack: str = Form(...), registry: UploadFile = File(...)):
         raise HTTPException(502, f"Match failed: {e}")
 
 
+@app.get("/api/diag")
+def diag():
+    from app.checker import _cfg
+
+    try:
+        base, key, model = _cfg()
+    except Exception as e:
+        return {"config_error": str(e)}
+    out = {"provider": os.getenv("SABI_PROVIDER", "meta"), "base_url": base, "model": model, "mode": os.getenv("SABI_MODE", "mock"), "key_looks_like_meta": key.startswith("LLM_")}
+    try:
+        from openai import OpenAI
+
+        out["models"] = [x.id for x in OpenAI(base_url=base, api_key=key).models.list()][:40]
+    except Exception as e:
+        out["models_error"] = str(e)[:200]
+    return out
+
+
 @app.get("/play")
 def play():
     return FileResponse("static/play.html")
