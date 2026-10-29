@@ -149,7 +149,7 @@ $('cmp').onclick=async()=>{
   $('cmp').disabled=true;$('cmp').textContent='Comparing…';const fd=new FormData();fd.append('pack',JSON.stringify(pack));fd.append('registry',await shrink(regFile));
   try{const d=await post('/api/match',fd);
     {const v=finalV(pack,d);stamp($('mstamp'),v[0]);$('mstamp').textContent=v[1];$('msum').textContent=v[2]+' '+d.summary}$('checks').innerHTML='';
-    d.checks.forEach(c=>row($('checks'),c.result,ICON[c.result]||'?',c.item,'Pack: '+(c.pack||'unreadable')+'. Record: '+(c.registry||'unreadable')+'. '+c.note));
+    {const nf=d.registry&&d.registry.found===false;let list=nf?d.checks.filter(c=>/number/i.test(c.item)).slice(0,1):d.checks;if(nf&&!list.length)list=d.checks.slice(0,1);list.forEach(c=>row($('checks'),c.result,ICON[c.result]||'?',cap(String(c.item).replaceAll('_',' ')),(c.pack?'Pack: '+c.pack+'. ':'')+(c.registry?'Record: '+c.registry+'. ':'')+(c.note||'')))}
     $('mout').classList.remove('hide');
   }catch(e){$('msg').textContent='Could not compare: '+e.message}
   $('cmp').disabled=false;$('cmp').textContent='Compare with the record'};
