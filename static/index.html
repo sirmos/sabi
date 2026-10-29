@@ -77,7 +77,7 @@ h1 .gt{background:linear-gradient(90deg,#ffd166,#ff8a5c 55%,#ff5d73);-webkit-bac
 .card{background:linear-gradient(160deg,#10301fe0,#0a1d15e0)!important;border-color:#2c6e55!important;box-shadow:0 24px 60px #0008}
 .tiles i{color:var(--amber)!important;border-color:#ffb53a55!important;background:#ffb53a14!important}
 .nav{border-color:#ffb53a!important;color:#ffb53a!important}.logo{font-weight:700!important;letter-spacing:.02em}
-button.alt{background:transparent!important;color:var(--ink)!important;border:2px solid var(--line)!important;box-shadow:none}:root{color-scheme:dark}</style></head>
+button.alt{background:transparent!important;color:var(--ink)!important;border:2px solid var(--line)!important;box-shadow:none}:root{color-scheme:dark}.notice{border:1px solid #ffb53a88;background:#ffb53a14;border-radius:.9rem;padding:.7rem .9rem;font-size:.92rem;margin-bottom:.2rem}.logo{line-height:1.7!important;overflow:visible}.rg.pulse{animation:pls .7s 4}@keyframes pls{50%{box-shadow:0 0 0 8px #FFD23F99}}#rplace{width:100%;font:inherit;padding:.7rem .9rem;border-radius:.7rem;border:1px solid var(--line);background:#0b1f17;color:var(--ink);margin-top:.5rem}#rtxt{white-space:pre-wrap;font:inherit;font-size:.9rem;background:#0b1f17;border:1px solid var(--line);border-radius:.7rem;padding:.8rem;color:var(--mute)}a.btn.alt{background:transparent!important;color:var(--ink)!important;border:2px solid var(--line);box-shadow:none}</style></head>
 <body>
 <header class="top"><div class="in"><a href="/" class="logo"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4 6v6c0 5 3.4 8 8 9 4.6-1 8-4 8-9V6z"/><path d="m8.5 12 2.5 2.5 4.5-5"/></svg>Sabi</a><span style="display:flex;gap:.9rem;align-items:center"><a href="/play" class="nav">Play</a><span id="pill" class="pill"></span></span></div></header>
 <main>
@@ -92,7 +92,7 @@ button.alt{background:transparent!important;color:var(--ink)!important;border:2p
 <div id="out" class="split">
 <div class="stage" id="stage"></div>
 <div class="report">
-<div id="demo" class="demo hide">Demo data, not a real check. Set SABI_MODE=live in .env and restart the server.</div>
+<div class="notice"><b>Important:</b> Sabi highlights warning signs to investigate. It cannot confirm that a product is counterfeit from photos alone, and a matching NAFDAC record does not prove this physical pack is genuine.</div><div id="demo" class="demo hide"></div>
 <div class="card"><p class="step"><span class="n">2</span>What Sabi found</p>
 <div id="stamp" class="stamp"></div><div id="meter" class="meter"><i></i><i></i><i></i></div><div class="mlab"><span>Low</span><span>Medium</span><span>High</span></div>
 <p id="sum" class="sum"></p><ul id="flags" style="margin-top:.8rem"></ul>
@@ -104,10 +104,10 @@ button.alt{background:transparent!important;color:var(--ink)!important;border:2p
 <label class="pick" style="margin-top:1rem"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 9h8M8 13h8M8 17h5"/></svg>Add the NAFDAC result screenshot<input id="reg" type="file" accept="image/*"></label>
 <div id="rthumb" class="thumbs"></div><p id="rname" class="fname"></p>
 <button id="cmp" disabled>Compare with the record</button>
-<details class="how"><summary>How Sabi decides</summary><p>Sabi never says a product is genuine. It combines three things: warning signs on the pack, whether NAFDAC has a record for the number, and whether that record fits the pack (name, product type, manufacturer, expiry). No record is a strong red flag. A matching record with a clean pack means “looks consistent”.</p></details><div id="mout" class="hide"><div id="mstamp" class="stamp" style="margin-top:1.2rem"></div><p id="msum" class="sum"></p><ul id="checks" style="margin-top:.6rem"></ul></div></div>
+<details class="how"><summary>How Sabi decides</summary><p>Sabi never says a product is genuine. It combines three things: warning signs on the pack, whether NAFDAC has a record for the number, and whether that record fits the pack (name, product type, manufacturer, expiry). No record is a strong red flag. A matching record with a clean pack means “looks consistent”.</p></details><div id="mout" class="hide"><div id="mstamp" class="stamp" style="margin-top:1.2rem"></div><p id="msum" class="sum"></p><ul id="checks" style="margin-top:.6rem"></ul><div id="rep" class="hide"><h3 style="margin:1.4rem 0 .3rem">Report it</h3><p class="help">A short report for NAFDAC. It contains no personal details.</p><input id="rplace" type="text" placeholder="Where did you buy it? (shop or market)"><pre id="rtxt"></pre><button id="rcopy" class="alt">Copy report</button><a id="rmail" class="btn" target="_blank" rel="noopener">Email NAFDAC</a><a id="rwa" class="btn alt" target="_blank" rel="noopener">WhatsApp</a><p class="help">NAFDAC hotline: 0800-162-3322. Check the email address on nafdac.gov.ng before you send.</p></div></div></div>
 </div></div>
 </main>
-<footer>Sabi is a risk screen, not proof. If in doubt, don’t buy it, and report to NAFDAC: 0800-162-3322.</footer>
+<footer>Sabi is a risk screen, not proof. If in doubt, don’t buy it, and report to NAFDAC: 0800-162-3322.<br>Photos are sent to Meta’s model API for analysis and are not stored by Sabi.</footer>
 <script>
 const $=id=>document.getElementById(id);let files=[],pack=null,regFile=null;
 const LABEL={high:'High risk',medium:'Medium risk',low:'Low risk',unclear:'Can’t tell yet',consistent:'Fits the record',inconsistent:'Doesn’t fit'};
@@ -138,9 +138,9 @@ $('go').onclick=async()=>{
   try{const d=pack=await post('/api/check',fd);
     stamp($('stamp'),d.risk);$('meter').className='meter m-'+d.risk;$('sum').textContent=d.summary;stage(d);
     const pins=new Set((d.regions||[]).map(r=>r.label));
-    $('flags').innerHTML='';d.flags.forEach((f,i)=>{const p=pins.has(tag(f.code));row($('flags'),f.severity,p?String(i+1):(ICON[f.severity]||'!'),cap(tag(f.code)),f.evidence+' ('+f.where+')',p)});
+    $('flags').innerHTML='';d.flags.forEach((f,i)=>{const p=pins.has(tag(f.code));row($('flags'),f.severity,p?String(i+1):(ICON[f.severity]||'!'),cap(tag(f.code)),f.evidence+' ('+f.where+')',p)});[...$('flags').children].forEach((li,i)=>{li.style.cursor='pointer';li.onclick=()=>{document.querySelectorAll('.rg').forEach(x=>x.classList.remove('pulse'));document.querySelectorAll('.rg b').forEach(b=>{if(b.textContent===String(i+1))b.parentElement.classList.add('pulse')});$('stage').scrollIntoView({behavior:'smooth',block:'center'})}});
     $('rt').innerHTML='';(d.retake||[]).forEach(t=>$('rt').append(el('li','',t)));$('retake').classList.toggle('hide',!(d.retake||[]).length);
-    $('num').textContent=d.nafdac_number||'not found';$('ver').href=d.verify_url;$('demo').classList.toggle('hide',d.mode!=='mock');
+    $('num').textContent=d.nafdac_number||'not found';$('ver').href=d.verify_url;$('demo').textContent=d.mode==='mock'?'Demo data, not a real check.':'';$('demo').classList.toggle('hide',d.mode!=='mock');
     $('copy').onclick=async()=>{await navigator.clipboard.writeText(d.nafdac_number||'');$('copy').textContent='Copied';setTimeout(()=>$('copy').textContent='Copy number',1500)};
     document.body.classList.add('done');$('out').classList.add('on');$('mout').classList.add('hide');$('out').scrollIntoView({behavior:'smooth',block:'start'});
   }catch(e){$('msg').textContent='Could not check this pack: '+e.message}
@@ -148,9 +148,17 @@ $('go').onclick=async()=>{
 $('cmp').onclick=async()=>{
   $('cmp').disabled=true;$('cmp').textContent='Comparing…';const fd=new FormData();fd.append('pack',JSON.stringify(pack));fd.append('registry',await shrink(regFile));
   try{const d=await post('/api/match',fd);
-    {const v=finalV(pack,d);stamp($('mstamp'),v[0]);$('mstamp').textContent=v[1];$('msum').textContent=v[2]+' '+d.summary}$('checks').innerHTML='';
+    {const v=finalV(pack,d);stamp($('mstamp'),v[0]);$('mstamp').textContent=v[1];$('msum').textContent=v[2]+' '+d.summary;makeReport(pack,d,v)}$('checks').innerHTML='';
     {const nf=d.registry&&d.registry.found===false;let list=nf?d.checks.filter(c=>/number/i.test(c.item)).slice(0,1):d.checks;if(nf&&!list.length)list=d.checks.slice(0,1);list.forEach(c=>row($('checks'),c.result,ICON[c.result]||'?',cap(String(c.item).replaceAll('_',' ')),(c.pack?'Pack: '+c.pack+'. ':'')+(c.registry?'Record: '+c.registry+'. ':'')+(c.note||'')))}
     $('mout').classList.remove('hide');
   }catch(e){$('msg').textContent='Could not compare: '+e.message}
   $('cmp').disabled=false;$('cmp').textContent='Compare with the record'};
+
+let LAST;
+function makeReport(p,m,v){LAST=[p,m,v];const show=v[0]==='high'||v[0]==='medium';$('rep').classList.toggle('hide',!show);if(!show)return;
+ const nf=m.registry&&m.registry.found===false,fl=(p.flags||[]).map(f=>'- '+cap(tag(f.code))+': '+f.evidence).join('\n'),pl=($('rplace').value||'').trim();
+ const t=['Suspected counterfeit or unregistered product','Product: '+(p.brand_as_printed||p.product_name||'unknown'),'NAFDAC number on pack: '+(p.nafdac_number||'not visible'),'Batch: '+(p.batch_code||'not visible')+' | Manufactured: '+(p.manufacture_date||'not visible')+' | Expiry: '+(p.expiry_date||'not visible'),'NAFDAC registry check: '+(nf?'no record found for this number':v[1]),'Warning signs seen:\n'+(fl||'- none recorded'),'Bought at: '+(pl||'[add shop or market]'),'Date: '+new Date().toLocaleDateString('en-GB'),'Checked with Sabi, an AI-assisted risk screen. It highlights warning signs and cannot confirm that a product is counterfeit.'].join('\n');
+ $('rtxt').textContent=t;$('rmail').href='mailto:sf.alert@nafdac.gov.ng?subject='+encodeURIComponent('Suspected counterfeit product report')+'&body='+encodeURIComponent(t);$('rwa').href='https://wa.me/?text='+encodeURIComponent(t)}
+$('rplace').oninput=()=>LAST&&makeReport(...LAST);
+$('rcopy').onclick=async()=>{try{await navigator.clipboard.writeText($('rtxt').textContent);$('rcopy').textContent='Copied ✓';setTimeout(()=>$('rcopy').textContent='Copy report',1500)}catch{}};
 </script></body></html>
