@@ -3,25 +3,25 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-PACK_SYSTEM = """You are Sabi, a careful pack inspector for Nigerian shoppers. You screen photos of packaged goods (baby food, toothpaste, cosmetics, snacks) for signs of counterfeiting or tampering. Photos may show different sides of one pack: combine them.
-Rules: report only what is visible; use null when unreadable; NEVER say a product is genuine, only report risk signs. A printed NAFDAC number proves nothing until it is looked up, so copy it exactly. If key areas are missing or blurry, set risk to "unclear" and list the exact extra photos needed in "retake". Not medical advice. For each flag, "find" is a 1-3 word noun naming one concrete visible object to outline (e.g. "sticker", "barcode", "date stamp", "brand logo") and "image" is the 0-based index of the photo where it is visible.
+PACK_SYSTEM = """You are Sabi, a careful pack inspector for shoppers in {COUNTRY}. You screen photos of packaged goods (food, baby food, toothpaste, soap, cosmetics, household goods, medicines) for warning signs of counterfeiting or tampering. Photos may show different sides of one pack: combine them.
+Rules: report only what is visible; use null when unreadable; NEVER say a product is genuine, only report warning signs. A printed registration, licence or permit number from a national regulator (for example NAFDAC, FDA Ghana, KEBS, FSSAI) proves nothing until it is looked up, so copy it exactly. If key areas are missing or blurry, set risk to "unclear" and list the exact extra photos needed in "retake". Not medical advice. For each flag, "find" is a 1-3 word noun naming one concrete visible object to outline (e.g. "sticker", "barcode", "date stamp", "brand logo") and "image" is the 0-based index of the photo where it is visible. "category" is one of medicine, food, cosmetic (includes toothpaste, soap, lotion, hair and skin products), household, other. "gtin" is the digits printed under the barcode, only if all digits are clearly readable.
 Return ONLY JSON:
-{"brand_as_printed": str|null, "product_name": str|null, "product_type": str|null, "nafdac_number": str|null, "batch_code": str|null,
+{"brand_as_printed": str|null, "product_name": str|null, "product_type": str|null, "category": str, "reg_number": str|null, "regulator": str|null, "gtin": str|null, "batch_code": str|null,
  "manufacturer": str|null, "manufacture_date": str|null, "expiry_date": str|null, "date_format": str|null,
  "manufacturer_address_present": bool|null,
- "flags": [{"code": "LOOKALIKE_NAME|DATE_FORMAT_ODD|STICKER_OVER_PRINT|REPRINTED_DATE|NO_NAFDAC_NUMBER|NO_BATCH|NO_MANUFACTURER_ADDRESS|SHELF_LIFE_ODD|POOR_PRINT|OTHER",
+ "flags": [{"code": "LOOKALIKE_NAME|DATE_FORMAT_ODD|STICKER_OVER_PRINT|REPRINTED_DATE|NO_REG_NUMBER|NO_BATCH|NO_MANUFACTURER_ADDRESS|SHELF_LIFE_ODD|POOR_PRINT|OTHER",
            "severity": "low|medium|high", "evidence": str, "where": str, "find": str|null, "image": int}],
  "retake": [str], "risk": "low|medium|high|unclear", "summary": str}"""
 
-MATCH_SYSTEM = """You compare a product pack against NAFDAC's registry record shown in a screenshot. Read the screenshot exactly. Compare: NAFDAC number, product name, product type vs registry category, manufacturer, and whether the pack's expiry date falls after the registry's expiry date. A matching number alone is not enough. Never call the pack genuine; say consistent or inconsistent with the record. If the screenshot says the product was not found, or shows no product details, set registry.found=false, leave the other registry fields null, set verdict to "inconsistent", add the check {"item":"NAFDAC number","pack":<the number on the pack>,"registry":null,"result":"mismatch","note":"NAFDAC has no record of this number"} and say in the summary that the number is not in the registry (it may also have been misread, so the digits should be re-checked). If a record is found and its product name, category and manufacturer fit the pack, the verdict is "consistent" even when the pack's batch or expiry cannot be read: mark those as cannot_tell.
+MATCH_SYSTEM = """You compare a product pack against a record from {REG}, shown in a screenshot (a register entry, a lookup result or an SMS reply). Read the screenshot exactly. Compare what the record shows with the pack: the registration or permit number, product name, product type or category, manufacturer or business name and address, validity status, and whether the pack's expiry date falls after the record's expiry date. A matching number alone is not enough. Never call the pack genuine; say consistent or inconsistent with the record. Some registers identify the business or the quality mark, not the product: then compare only what the record shows and mark the rest cannot_tell. If the screenshot says the product or number was not found, or shows no details, set registry.found=false, leave the other registry fields null, set verdict to "inconsistent", add the check {"item":"Registration number","pack":<the number on the pack>,"registry":null,"result":"mismatch","note":"No record found for this number"} and say in the summary that the number is not in the record (it may also have been misread, so the digits should be re-checked). If the record says the permit or registration is invalid, expired or cancelled, the verdict is "inconsistent". If a record is found and everything it shows fits the pack, the verdict is "consistent" even when the pack's batch or expiry cannot be read: mark those as cannot_tell.
 Return ONLY JSON:
-{"registry": {"found": bool, "product_name": str|null, "category": str|null, "source": str|null, "manufacturer": str|null, "nafdac_number": str|null, "approved": str|null, "expiry": str|null},
+{"registry": {"found": bool, "product_name": str|null, "category": str|null, "source": str|null, "manufacturer": str|null, "number": str|null, "approved": str|null, "expiry": str|null},
  "checks": [{"item": str, "pack": str|null, "registry": str|null, "result": "match|mismatch|cannot_tell", "note": str}],
  "verdict": "consistent|inconsistent|unclear", "summary": str}"""
 
 MOCK_PACK = {
     "brand_as_printed": "ORAMAX+", "product_name": "Toothpaste 100g", "product_type": "toothpaste",
-    "nafdac_number": "DEMO-0000", "batch_code": None, "manufacturer": None,
+    "reg_number": "DEMO-0000", "regulator": "NAFDAC", "category": "cosmetic", "gtin": None, "batch_code": None, "manufacturer": None,
     "manufacture_date": "03-2026", "expiry_date": "03-2028", "date_format": "MM-YYYY with hyphen",
     "manufacturer_address_present": False,
     "flags": [
@@ -30,10 +30,10 @@ MOCK_PACK = {
     ],
     "retake": ["Close-up of the crimp end where the batch code is printed"],
     "regions": [{"image": 0, "label": "lookalike name", "box": {"x1": 15, "y1": 8, "x2": 85, "y2": 30, "w": 100, "h": 100}}],
-    "risk": "high", "summary": "Several risk signs. Confirm the NAFDAC number before buying or using this pack.",
+    "risk": "high", "summary": "Several risk signs. Confirm the registration number before buying or using this pack.",
 }
 MOCK_MATCH = {
-    "registry": {"found": True, "product_name": "SAMPLE CREAM", "category": "Drugs", "source": "Imported Product", "manufacturer": "SAMPLE PHARMA LTD", "nafdac_number": "DEMO-0000", "approved": "2023-07-27", "expiry": "2028-07-26"},
+    "registry": {"found": True, "product_name": "SAMPLE CREAM", "category": "Drugs", "source": "Imported Product", "manufacturer": "SAMPLE PHARMA LTD", "number": "DEMO-0000", "approved": "2023-07-27", "expiry": "2028-07-26"},
     "checks": [
         {"item": "NAFDAC number", "pack": "DEMO-0000", "registry": "DEMO-0000", "result": "match", "note": "Numbers are identical."},
         {"item": "Product type", "pack": "toothpaste", "registry": "Drugs", "result": "mismatch", "note": "A toothpaste pack carrying a drug registration is a red flag."},
@@ -100,11 +100,17 @@ def locate(image: tuple, phrase: str) -> list:
     return [{"x1": int(m[0]), "y1": int(m[1]), "x2": int(m[2]) + 1, "y2": int(m[3]) + 1, "w": int(m[4]), "h": int(m[5])} for m in BOX.findall(text)]
 
 
-def check_pack(images: list) -> dict:
+NAMES = {"NG": "Nigeria", "GH": "Ghana", "KE": "Kenya", "IN": "India", "OT": "any country"}
+REGS = {"NG": "NAFDAC", "GH": "FDA Ghana", "KE": "KEBS", "IN": "FSSAI", "OT": "the national regulator"}
+
+
+def check_pack(images: list, country: str = "NG") -> dict:
     if not _live():
         return dict(MOCK_PACK, mode="mock")
     parts = [{"type": "text", "text": "Inspect this pack and return the JSON."}] + [_img(b, m) for b, m in images]
-    out = _llm(PACK_SYSTEM, parts)
+    out = _llm(PACK_SYSTEM.replace("{COUNTRY}", NAMES.get(country, "any country")), parts)
+    out["reg_number"] = out.get("reg_number") or out.get("nafdac_number")
+    out["nafdac_number"] = out.get("nafdac_number") or out["reg_number"]
     out["regions"] = []
     for f in out.get("flags", [])[:3]:
         if f.get("find"):
@@ -118,8 +124,9 @@ def check_pack(images: list) -> dict:
     return dict(out, mode="live")
 
 
-def match_registry(pack: dict, image: tuple) -> dict:
+def match_registry(pack: dict, image: tuple, country: str = "NG") -> dict:
     if not _live():
         return dict(MOCK_MATCH, mode="mock")
-    parts = [{"type": "text", "text": "Pack findings:\n" + json.dumps(pack) + "\nThe image is NAFDAC's verification result. Return the JSON."}, _img(*image)]
-    return dict(_llm(MATCH_SYSTEM, parts), mode="live")
+    reg = REGS.get(country, "the national regulator")
+    parts = [{"type": "text", "text": "Pack findings:\n" + json.dumps(pack) + "\nThe image is the " + reg + " result. Return the JSON."}, _img(*image)]
+    return dict(_llm(MATCH_SYSTEM.replace("{REG}", reg), parts), mode="live")

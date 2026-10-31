@@ -2,6 +2,7 @@ import json, os
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
+from app import barcode
 from app.checker import check_pack, match_registry
 
 app = FastAPI(title="Sabi")
@@ -23,10 +24,10 @@ def health():
 
 
 @app.post("/api/check")
-async def check(photos: list[UploadFile] = File(...)):
+async def check(photos: list[UploadFile] = File(...), country: str = Form("NG")):
     imgs = [await _read(p) for p in photos[:6]]
     try:
-        result = check_pack(imgs)
+        result = check_pack(imgs, country)
     except Exception as e:
         raise HTTPException(502, f"Check failed: {e}")
     result["verify_url"] = NAFDAC_VERIFY
@@ -34,13 +35,18 @@ async def check(photos: list[UploadFile] = File(...)):
 
 
 @app.post("/api/match")
-async def match(pack: str = Form(...), registry: UploadFile = File(...)):
+async def match(pack: str = Form(...), registry: UploadFile = File(...), country: str = Form("NG")):
     try:
-        return match_registry(json.loads(pack), await _read(registry))
+        return match_registry(json.loads(pack), await _read(registry), country)
     except HTTPException:
         raise
     except Exception as e:
         raise HTTPException(502, f"Match failed: {e}")
+
+
+@app.get("/api/barcode")
+def barcode_check(code: str = ""):
+    return barcode.check(code)
 
 
 @app.get("/api/diag")
